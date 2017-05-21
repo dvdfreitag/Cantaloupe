@@ -1,21 +1,22 @@
 # Include directories
 INCLUDE_DIRS := \
 -I./include \
--I./CMSIS/include
+-I./CMSIS/include \
+-I./ASF/include
 
 SRCS := \
-./hanlders.c \
+./ASF/system_same70n19.c \
 ./main.c
 
 OBJS := \
-./handlers.o \
+./system_same70n19.o \
 ./main.o
 
 TARGET := same70_test.elf
 MAP := same70_test.map
 LSS := same70_test.lss
 
-LINKER_SCRIPT := same70n19.ld
+LINKER_SCRIPT := ./ASF/scripts/same70n19.ld
 
 CC := arm-none-eabi-gcc
 OBJDUMP := arm-none-eabi-objdump
@@ -36,6 +37,11 @@ FLASH := 524288
 SRAM := 262144
 
 %.o: %.c
+	@$(CC) -x c -mthumb $(DEFINES) $(INCLUDE_DIRS) $(OPTIMIZE) $(OPTIMIZE_SECTIONS) -mlong-calls -g3 -Wall -Wextra -mcpu=$(CPU) -c -std=gnu99 $(DEPFLAGS) -o "$@" "$<"
+	@echo [CC] $@
+	@$(POSTCOMPILE)
+
+%.o: ./ASF/%.c
 	@$(CC) -x c -mthumb $(DEFINES) $(INCLUDE_DIRS) $(OPTIMIZE) $(OPTIMIZE_SECTIONS) -mlong-calls -g3 -Wall -Wextra -mcpu=$(CPU) -c -std=gnu99 $(DEPFLAGS) -o "$@" "$<"
 	@echo [CC] $@
 	@$(POSTCOMPILE)
